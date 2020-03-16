@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.majingji.pervue.mapper.DistrictMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.majingji.pervue.entity.District">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="parent" property="parent" />
+    </resultMap>
+
+    <resultMap id="ResultMap" type="com.majingji.pervue.entity.DistrictVo">
+        <id column="id" property="value" />
+        <result column="name" property="label" />
+        <collection property="children" ofType="com.majingji.pervue.entity.DistrictVo">
+            <id column="id1" property="value" />
+            <result column="name1" property="label" />
+            <collection property="children" ofType="com.majingji.pervue.entity.DistrictVo">
+                <id column="id2" property="value" />
+                <result column="name2" property="label" />
+            </collection>
+        </collection>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, parent
+    </sql>
+
+    <select id="dlist" resultMap="ResultMap">
+        select a.id,a.name,b.id id1,b.name name1,c.id id2,c.name name2 from t_district a left join t_district b on a.id = b.parent left join t_district c on b.id = c.parent where a.parent = 1
+    </select>
+</mapper>

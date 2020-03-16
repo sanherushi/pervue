@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.majingji.pervue.mapper.GoodsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.majingji.pervue.entity.Goods">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="image" property="image" />
+        <result column="price" property="price" />
+        <result column="create" property="create" />
+        <result column="province" property="province" />
+        <result column="city" property="city" />
+        <result column="district" property="district" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, image, price, create, province, city, district
+    </sql>
+
+    <select id="selectPageVo" resultType="com.majingji.pervue.entity.GoodsVo">
+        SELECT
+        a.*,
+        p.province provinceName,
+        IF
+        ( c.city = '', p.province, c.city ) cityName,
+        IF
+        ( d.district = '', c.city, d.district ) districtName,
+        GROUP_CONCAT( s.id ) sids,
+        GROUP_CONCAT( s.`name` ) snames,
+        GROUP_CONCAT( s.remark ) remarks
+        FROM
+        lx_goods a
+        LEFT JOIN nation p ON a.province = p.id
+        LEFT JOIN nation c ON a.city = c.id
+        LEFT JOIN nation d ON a.district = d.id
+        LEFT JOIN lx_goods_sales b ON a.id = b.gid
+        LEFT JOIN lx_sales s ON b.sid = s.id
+        <where>
+            <if test="goodsVo !=null">
+                <if test="goodsVo.name !=null and goodsVo.name !=''">
+                    and a.name like "%"#{goodsVo.name}"%"
+                </if>
+                <if test="goodsVo.p1 !=null and goodsVo.p1 !=''">
+                    and a.price >=#{goodsVo.p1}
+                </if>
+                <if test="goodsVo.p2 !=null and goodsVo.p2 !=''">
+                    and a.price &lt;=#{goodsVo.p2}
+                </if>
+            </if>
+        </where>
+        GROUP BY
+        a.id
+    </select>
+
+</mapper>
