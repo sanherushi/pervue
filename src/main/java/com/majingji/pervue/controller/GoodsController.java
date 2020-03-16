@@ -58,6 +58,7 @@ public class GoodsController {
 
     @RequestMapping("/insert")
     public ResultEntity insert(@RequestBody Goods goods){
+        //商品的添加
         //goods.setCreate(new Date());
 //        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 //        goods.setCreate(new Date(timestamp.getTime()));
